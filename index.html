@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sim Jia Yang - Software Engineer</title>
+	<style>
+		/* --- CSS VARIABLES --- */
+		:root {
+			/* LIGHT THEME */
+			--bg-color: #f3f4f6;
+			--text-main: #111827;
+			--text-secondary: #4b5563;
+			--text-muted: #6b7280;
+			--accent: #0d9488;
+			--accent-bg: rgba(13, 148, 136, 0.1);
+			--glass-bg: rgba(255, 255, 255, 0.7);
+			--glass-border: rgba(255, 255, 255, 0.5);
+			--line-color: #e5e7eb;
+			--shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+			--font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+			--transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+			/* Terminal Specifics */
+			--term-bg: #1e1e1e;
+			--term-header: #2d2d2d;
+			--term-text: #d4d4d4;
+			--code-keyword: #569cd6;
+			--code-string: #ce9178;
+			--code-func: #dcdcaa;
+			--code-class: #4ec9b0;
+		}
+
+		/* DARK THEME OVERRIDES */
+		[data-theme="dark"] {
+			--bg-color: #0a192f;
+			--text-main: #e6f1ff;
+			--text-secondary: #a8b2d1;
+			--text-muted: #8892b0;
+			--accent: #64ffda;
+			--accent-bg: rgba(100, 255, 218, 0.1);
+			--glass-bg: rgba(17, 34, 64, 0.7);
+			--glass-border: rgba(255, 255, 255, 0.1);
+			--line-color: #233554;
+			--shadow: 0 10px 30px -15px rgba(2, 12, 27, 0.7);
+		}
+
+		/* --- GLOBAL RESET --- */
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		html {
+			scroll-behavior: smooth;
+		}
+
+		body {
+			background-color: var(--bg-color);
+			color: var(--text-main);
+			font-family: var(--font-main);
+			line-height: 1.6;
+			overflow-x: hidden;
+			transition: background-color 0.5s ease, color 0.5s ease;
+		}
+
+		/* --- BACKGROUND & UTILITIES --- */
+		.bg-animation {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: -1;
+			overflow: hidden;
+			pointer-events: none;
+		}
+
+		.particle {
+			position: absolute;
+			background: var(--accent);
+			opacity: 0.1;
+			border-radius: 4px;
+			animation: floatUp 15s infinite linear;
+		}
+
+		@keyframes floatUp {
+			0% {
+				transform: translateY(100vh) rotate(0deg);
+				opacity: 0;
+			}
+
+			100% {
+				transform: translateY(-20vh) rotate(360deg);
+				opacity: 0;
+			}
+		}
+
+		.scroll-progress {
+			position: fixed;
+			top: 0;
+			left: 0;
+			height: 3px;
+			background: var(--accent);
+			width: 0%;
+			z-index: 9999;
+			transition: width 0.1s;
+		}
+
+		.container {
+			max-width: 1000px;
+			margin: 0 auto;
+			padding: 0 20px;
+			position: relative;
+		}
+
+		section {
+			margin-bottom: 120px;
+			opacity: 0;
+			transform: translateY(30px);
+			transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+		}
+
+		section.visible {
+			opacity: 1;
+			transform: translateY(0);
+		}
+
+		h2 {
+			display: flex;
+			align-items: center;
+			font-size: 2rem;
+			color: var(--text-main);
+			margin-bottom: 50px;
+			font-weight: 700;
+			position: relative;
+		}
+
+		h2::before {
+			content: attr(data-number);
+			color: var(--accent);
+			margin-right: 15px;
+			font-family: monospace;
+			font-size: 1.5rem;
+		}
+
+		h2::after {
+			content: "";
+			display: block;
+			height: 1px;
+			background: var(--line-color);
+			flex-grow: 1;
+			margin-left: 20px;
+			opacity: 0.5;
+		}
+
+		/* --- GLASS CARD STYLE --- */
+		.glass-card {
+			background: var(--glass-bg);
+			backdrop-filter: blur(10px);
+			-webkit-backdrop-filter: blur(10px);
+			border: 1px solid var(--glass-border);
+			border-radius: 12px;
+			box-shadow: var(--shadow);
+			transition: var(--transition);
+		}
+
+		/* --- HEADER / HERO --- */
+		header {
+			min-height: 90vh;
+			display: grid;
+			grid-template-columns: 1.2fr 1fr;
+			align-items: center;
+			gap: 40px;
+			opacity: 0;
+			animation: fadeIn 1s ease-out forwards;
+		}
+
+		.hero-intro {
+			color: var(--accent);
+			font-family: monospace;
+			font-size: 1.1rem;
+			margin-bottom: 10px;
+		}
+
+		.hero-name {
+			font-size: clamp(40px, 7vw, 70px);
+			font-weight: 800;
+			line-height: 1.1;
+			margin-bottom: 10px;
+			cursor: default;
+			transition: color 0.3s;
+		}
+
+		.hero-name:hover {
+			color: var(--accent);
+		}
+
+		.hero-title {
+			font-size: clamp(25px, 5vw, 50px);
+			font-weight: 700;
+			color: var(--text-secondary);
+			margin-bottom: 20px;
+		}
+
+		.hero-desc {
+			max-width: 540px;
+			font-size: 1.1rem;
+			color: var(--text-secondary);
+			margin-bottom: 30px;
+		}
+
+		/* Terminal Window */
+		.hero-visual {
+			perspective: 1000px;
+		}
+
+		.terminal-window {
+			background-color: var(--term-bg);
+			border-radius: 10px;
+			box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+			width: 100%;
+			max-width: 480px;
+			height: 340px;
+			border: 1px solid var(--line-color);
+			transform: rotateY(-5deg) rotateX(5deg);
+			transition: transform 0.5s ease;
+			overflow: hidden;
+		}
+
+		.terminal-window:hover {
+			transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+		}
+
+		.terminal-header {
+			background: var(--term-header);
+			padding: 12px;
+			display: flex;
+			gap: 8px;
+		}
+
+		.dot {
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+		}
+
+		.red {
+			background: #ff5f56;
+		}
+
+		.yellow {
+			background: #ffbd2e;
+		}
+
+		.green {
+			background: #27c93f;
+		}
+
+		.terminal-body {
+			padding: 20px;
+			color: var(--term-text);
+			font-family: 'Consolas', 'Monaco', monospace;
+			font-size: 14px;
+			line-height: 1.5;
+			white-space: pre-wrap;
+			/* Keeps newlines intact */
+		}
+
+		/* Code Colors */
+		.c-kw {
+			color: var(--code-keyword);
+		}
+
+		.c-str {
+			color: var(--code-string);
+		}
+
+		.c-fn {
+			color: var(--code-func);
+		}
+
+		.c-cls {
+			color: var(--code-class);
+		}
+
+		.cursor {
+			display: inline-block;
+			width: 8px;
+			height: 15px;
+			background: var(--accent);
+			animation: blink 1s infinite;
+			vertical-align: text-bottom;
+			margin-left: 2px;
+		}
+
+		@keyframes blink {
+			50% {
+				opacity: 0;
+			}
+		}
+
+		/* Buttons */
+		.btn-group {
+			display: flex;
+			gap: 15px;
+			flex-wrap: wrap;
+			margin-top: 30px;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 12px 28px;
+			border: 1px solid var(--accent);
+			border-radius: 4px;
+			color: var(--accent);
+			text-decoration: none;
+			font-family: monospace;
+			font-weight: 600;
+			background: transparent;
+			transition: all 0.3s ease;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.btn:hover {
+			background: var(--accent-bg);
+			transform: translateY(-3px);
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+		}
+
+		.btn-primary {
+			background: var(--accent-bg);
+		}
+
+		/* --- 1. TIMELINE EXPERIENCE SECTION --- */
+		.timeline {
+			position: relative;
+			border-left: 2px solid var(--line-color);
+			margin-left: 10px;
+			padding-left: 40px;
+		}
+
+		.timeline-item {
+			position: relative;
+			margin-bottom: 50px;
+		}
+
+		/* The Dot */
+		.timeline-item::before {
+			content: '';
+			position: absolute;
+			left: -49px;
+			top: 0;
+			width: 16px;
+			height: 16px;
+			border-radius: 50%;
+			background: var(--bg-color);
+			border: 2px solid var(--accent);
+			transition: background 0.3s;
+		}
+
+		.timeline-item:hover::before {
+			background: var(--accent);
+			box-shadow: 0 0 10px var(--accent);
+		}
+
+		.job-card {
+			padding: 25px;
+			cursor: default;
+		}
+
+		.job-card:hover {
+			transform: translateY(-5px);
+			border-color: var(--accent);
+		}
+
+		.job-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+			margin-bottom: 15px;
+			flex-wrap: wrap;
+		}
+
+		.job-role {
+			font-size: 1.4rem;
+			font-weight: 700;
+			color: var(--text-main);
+		}
+
+		.job-company {
+			color: var(--accent);
+			font-family: monospace;
+			font-size: 1rem;
+			margin-top: 5px;
+		}
+
+		.job-date {
+			font-family: monospace;
+			font-size: 0.85rem;
+			padding: 4px 10px;
+			border: 1px solid var(--line-color);
+			border-radius: 20px;
+			color: var(--text-secondary);
+		}
+
+		.job-list {
+			list-style: none;
+			margin-top: 15px;
+		}
+
+		.job-list li {
+			position: relative;
+			padding-left: 20px;
+			margin-bottom: 10px;
+			color: var(--text-secondary);
+			font-size: 0.95rem;
+			opacity: 0;
+			transform: translateX(20px);
+			transition: all 0.5s ease;
+		}
+
+		.job-list li::before {
+			content: "▹";
+			position: absolute;
+			left: 0;
+			color: var(--accent);
+		}
+
+		/* Staggered animation trigger */
+		.timeline-item:hover .job-list li,
+		.visible .job-list li {
+			opacity: 1;
+			transform: translateX(0);
+		}
+
+		/* --- 2. CATEGORIZED SKILLS SECTION --- */
+		.skills-container {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+			gap: 25px;
+		}
+
+		.skill-category {
+			padding: 25px;
+			text-align: left;
+		}
+
+		.skill-category:hover {
+			transform: translateY(-5px);
+			border-color: var(--accent);
+		}
+
+		.skill-title {
+			font-size: 1.1rem;
+			color: var(--text-main);
+			margin-bottom: 20px;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.skill-title svg {
+			width: 20px;
+			height: 20px;
+			stroke: var(--accent);
+		}
+
+		.skill-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+		}
+
+		.skill-tag {
+			font-family: monospace;
+			font-size: 0.85rem;
+			padding: 8px 14px;
+			background: var(--bg-color);
+			color: var(--text-secondary);
+			border: 1px solid var(--line-color);
+			border-radius: 4px;
+			transition: all 0.2s;
+		}
+
+		.skill-tag:hover {
+			color: var(--accent);
+			border-color: var(--accent);
+			transform: scale(1.1);
+			background: var(--accent-bg);
+		}
+
+		/* --- 3. EDUCATION SECTION --- */
+		.edu-wrapper {
+			position: relative;
+			padding: 30px;
+			text-align: center;
+			border-left: 4px solid var(--accent);
+		}
+
+		.edu-wrapper:hover {
+			transform: scale(1.01);
+			box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.2);
+		}
+
+		.edu-icon {
+			width: 60px;
+			height: 60px;
+			background: var(--accent-bg);
+			color: var(--accent);
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0 auto 20px auto;
+		}
+
+		.edu-degree {
+			font-size: 1.5rem;
+			font-weight: 700;
+			color: var(--text-main);
+			margin-bottom: 5px;
+		}
+
+		.edu-school {
+			font-size: 1.1rem;
+			color: var(--text-secondary);
+			margin-bottom: 15px;
+		}
+
+		.edu-meta {
+			display: inline-block;
+			padding: 5px 15px;
+			background: var(--bg-color);
+			border-radius: 20px;
+			font-family: monospace;
+			color: var(--accent);
+			font-size: 0.9rem;
+		}
+
+		.edu-desc {
+			margin-top: 20px;
+			color: var(--text-secondary);
+			max-width: 700px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		/* --- 4. ADDITIONAL INFO --- */
+		.info-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			gap: 30px;
+		}
+
+		.info-card {
+			padding: 30px;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.info-card::before {
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 4px;
+			background: linear-gradient(90deg, var(--accent), transparent);
+		}
+
+		.info-header {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			margin-bottom: 20px;
+		}
+
+		.info-header h3 {
+			font-size: 1.2rem;
+			margin: 0;
+			color: var(--text-main);
+		}
+
+		.info-content ul {
+			list-style: none;
+			padding: 0;
+		}
+
+		.info-content li {
+			margin-bottom: 12px;
+			padding-left: 20px;
+			position: relative;
+			color: var(--text-secondary);
+		}
+
+		.info-content li::before {
+			content: "•";
+			color: var(--accent);
+			font-size: 1.5rem;
+			position: absolute;
+			left: 0;
+			top: -5px;
+		}
+
+		/* --- THEME TOGGLE --- */
+		.theme-toggle {
+			position: fixed;
+			top: 20px;
+			right: 20px;
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			background: var(--glass-bg);
+			border: 1px solid var(--line-color);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			z-index: 1000;
+			transition: transform 0.3s;
+			backdrop-filter: blur(5px);
+		}
+
+		.theme-toggle:hover {
+			transform: rotate(15deg) scale(1.1);
+		}
+
+		.theme-toggle svg {
+			width: 24px;
+			height: 24px;
+			stroke: var(--accent);
+			fill: none;
+			stroke-width: 2;
+		}
+
+		/* --- MEDIA QUERIES --- */
+		@media (max-width: 768px) {
+			header {
+				grid-template-columns: 1fr;
+				text-align: center;
+				padding-top: 80px;
+			}
+
+			.hero-visual {
+				display: none;
+			}
+
+			.timeline {
+				border-left: none;
+				padding-left: 0;
+				margin-left: 0;
+			}
+
+			.timeline-item::before {
+				display: none;
+			}
+
+			.btn-group {
+				justify-content: center;
+			}
+
+			h2 {
+				font-size: 1.5rem;
+			}
+		}
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+				transform: translateY(20px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="scroll-progress" id="scroll-progress"></div>
+	<div class="bg-animation" id="bg-animation"></div>
+
+	<button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme">
+		<svg id="sun-icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+			<circle cx="12" cy="12" r="5"></circle>
+			<line x1="12" y1="1" x2="12" y2="3"></line>
+			<line x1="12" y1="21" x2="12" y2="23"></line>
+			<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+			<line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+			<line x1="1" y1="12" x2="3" y2="12"></line>
+			<line x1="21" y1="12" x2="23" y2="12"></line>
+			<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+			<line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+		</svg>
+		<svg id="moon-icon" style="display:none;" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+			<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+		</svg>
+	</button>
+
+	<div class="container">
+
+		<!-- HERO -->
+		<header>
+			<div class="hero-content">
+				<div class="hero-intro">Hi, my name is</div>
+				<h1 class="hero-name">Sim Jia Yang.</h1>
+				<h2 class="hero-title" style="border:none; margin:0; padding:0; display:block;">I build scalable
+					software.</h2>
+				<p class="hero-desc">
+					Software Engineer specialized in <strong style="color:var(--accent)">Java Spring Boot</strong>,
+					<strong style="color:var(--accent)">.NET Core</strong>, and <strong
+						style="color:var(--accent)">Full-Stack Development</strong>.
+				</p>
+				<div class="btn-group">
+					<a href="sim-jia-yang-resume.pdf" download class="btn btn-primary">Download Resume</a>
+					<a href="https://github.com/SimJiaYang" target="_blank" class="btn">GitHub</a>
+					<a href="https://www.linkedin.com/in/simjiayang/" target="_blank" class="btn">LinkedIn</a>
+				</div>
+			</div>
+
+			<div class="hero-visual">
+				<div class="terminal-window">
+					<div class="terminal-header">
+						<div class="dot red"></div>
+						<div class="dot yellow"></div>
+						<div class="dot green"></div>
+					</div>
+					<div class="terminal-body" id="code-container"><span class="cursor"></span></div>
+				</div>
+			</div>
+		</header>
+
+		<!-- 1. EXPERIENCE (Timeline Style) -->
+		<section id="experience">
+			<h2 data-number="01.">Professional Experience</h2>
+			<div class="timeline">
+
+				<div class="timeline-item">
+					<div class="glass-card job-card">
+						<div class="job-header">
+							<div>
+								<div class="job-role">.NET Developer</div>
+								<div class="job-company">Maybank Agnes Holding Berhad</div>
+							</div>
+							<div class="job-date">Oct 2024 - Present</div>
+						</div>
+						<ul class="job-list">
+							<li>Write GitHub Action workflows to automate deployment to SIT, UAT, and PROD servers.</li>
+							<li>Developed a Windows program to automate batch file transfers between shared drives and
+								FileNet.</li>
+							<li>Developed and integrated an HTML editor to enable template, SMS, and email creation.
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="timeline-item">
+					<div class="glass-card job-card">
+						<div class="job-header">
+							<div>
+								<div class="job-role">Software Engineer Intern</div>
+								<div class="job-company">ER Group Technology Sdn Bhd</div>
+							</div>
+							<div class="job-date">May 2024 - Aug 2024</div>
+						</div>
+						<ul class="job-list">
+							<li>Integrated ERP system with Malaysia's government e-invoicing API.</li>
+							<li>Customized printing templates using CSS and JavaScript for accurate data display.</li>
+							<li>Optimized system query performance by using native SQL queries in JPA.</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="timeline-item">
+					<div class="glass-card job-card">
+						<div class="job-header">
+							<div>
+								<div class="job-role">Flutter Developer</div>
+								<div class="job-company">Techworld Innovation Sdn Bhd</div>
+							</div>
+							<div class="job-date">May 2023 - Jan 2024</div>
+						</div>
+						<ul class="job-list">
+							<li>Developed Windows and Android applications based on Figma designs.</li>
+							<li>Built reusable custom components, reducing code redundancy and improving
+								maintainability.</li>
+						</ul>
+					</div>
+				</div>
+
+			</div>
+		</section>
+
+		<!-- 2. SKILLS (Categorized & Interactive) -->
+		<section id="skills">
+			<h2 data-number="02.">Technical Skills</h2>
+			<div class="skills-container">
+
+				<div class="glass-card skill-category">
+					<div class="skill-title">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+							<line x1="8" y1="21" x2="16" y2="21"></line>
+							<line x1="12" y1="17" x2="12" y2="21"></line>
+						</svg>
+						Backend & Core
+					</div>
+					<div class="skill-tags">
+						<span class="skill-tag">Java (Spring Boot)</span>
+						<span class="skill-tag">C# (.NET Core)</span>
+						<span class="skill-tag">PHP</span>
+						<span class="skill-tag">MySQL</span>
+						<span class="skill-tag">RESTful APIs</span>
+					</div>
+				</div>
+
+				<div class="glass-card skill-category">
+					<div class="skill-title">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+						</svg>
+						Frontend & Mobile
+					</div>
+					<div class="skill-tags">
+						<span class="skill-tag">HTML5 & CSS3</span>
+						<span class="skill-tag">JavaScript</span>
+						<span class="skill-tag">Flutter</span>
+						<span class="skill-tag">Android Studio</span>
+						<span class="skill-tag">Angular/React</span>
+					</div>
+				</div>
+
+				<div class="glass-card skill-category">
+					<div class="skill-title">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path
+								d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+							</path>
+						</svg>
+						DevOps & Tools
+					</div>
+					<div class="skill-tags">
+						<span class="skill-tag">GitHub Actions</span>
+						<span class="skill-tag">Jenkins</span>
+						<span class="skill-tag">Jira</span>
+						<span class="skill-tag">CyberArk</span>
+						<span class="skill-tag">Git (BitBucket)</span>
+					</div>
+				</div>
+
+			</div>
+		</section>
+
+		<!-- 3. EDUCATION (Certificate Style) -->
+		<section id="education">
+			<h2 data-number="03.">Education</h2>
+			<div class="glass-card edu-wrapper">
+				<div class="edu-icon">
+					<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+						<path d="M6 12v5c3 0 6-1 6-1v-4"></path>
+					</svg>
+				</div>
+				<div class="edu-degree">Bachelor of Software Engineering</div>
+				<div class="edu-school">Southern University College</div>
+				<div class="edu-meta">June 2021 - Oct 2024 &bull; CGPA 3.75 First Class</div>
+				<p class="edu-desc">
+					Relevant coursework included Full-Stack Development, Mobile Architecture, and Database Management.
+					<br><strong>Capstone:</strong> Developed a complete E-Commerce Application including web admin
+					panel, backend API, and mobile user interface.
+				</p>
+			</div>
+		</section>
+
+		<!-- 4. ADDITIONAL INFO (Grid Style) -->
+		<section id="additional">
+			<h2 data-number="04.">Additional Info</h2>
+			<div class="info-grid">
+
+				<div class="glass-card info-card">
+					<div class="info-header">
+						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+							stroke-width="2" stroke="var(--accent)">
+							<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+							<path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+						</svg>
+						<h3>Languages</h3>
+					</div>
+					<div class="info-content">
+						<p style="color:var(--text-secondary); line-height:1.8;">
+							Fluent in <strong>English, Malay,</strong> and <strong>Mandarin</strong>.<br>
+							Conversational in <strong>Hokkien</strong> and <strong>Cantonese</strong>.
+						</p>
+					</div>
+				</div>
+
+				<div class="glass-card info-card">
+					<div class="info-header">
+						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+							stroke-width="2" stroke="var(--accent)">
+							<circle cx="12" cy="8" r="7"></circle>
+							<polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+						</svg>
+						<h3>Awards</h3>
+					</div>
+					<div class="info-content">
+						<ul>
+							<li>UNIKL ICPEX 2023 - Silver Award (DS00007)</li>
+							<li>SUC Student Union Enthusiastic Service Award</li>
+						</ul>
+					</div>
+				</div>
+
+			</div>
+		</section>
+
+		<footer
+			style="text-align:center; color:var(--text-secondary); margin-top:80px; padding-bottom:40px; font-size:0.9rem;">
+			<p>Designed & Built by Sim Jia Yang</p>
+		</footer>
+
+	</div>
+
+	<script>
+		// --- ANIMATIONS & LOGIC ---
+
+		// 1. Background Particles
+		const bg = document.getElementById('bg-animation');
+		for (let i = 0; i < 20; i++) {
+			let p = document.createElement('div');
+			p.className = 'particle';
+			p.style.left = Math.random() * 100 + '%';
+			p.style.width = p.style.height = (Math.random() * 15 + 5) + 'px';
+			p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+			p.style.animationDelay = (Math.random() * 5) + 's';
+			bg.appendChild(p);
+		}
+
+		// 2. Scroll Animation
+		const observer = new IntersectionObserver(entries => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					entry.target.classList.add('visible');
+					// Stagger list items inside visible sections
+					entry.target.querySelectorAll('.job-list li').forEach((li, idx) => {
+						li.style.transitionDelay = (idx * 0.1) + 's';
+					});
+				}
+			});
+		}, { threshold: 0.1 });
+		document.querySelectorAll('section').forEach(s => observer.observe(s));
+
+		// 3. Scroll Progress
+		window.onscroll = () => {
+			let scroll = document.documentElement.scrollTop;
+			let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+			document.getElementById('scroll-progress').style.width = (scroll / height) * 100 + "%";
+		};
+
+		// 4. Code Typewriter (FIXED)
+		const codeDiv = document.getElementById('code-container');
+		const codeText = [
+			{ t: "class ", c: "c-kw" }, { t: "SimJiaYang ", c: "c-cls" }, { t: "extends ", c: "c-kw" }, { t: "Developer ", c: "c-cls" }, { t: "{\n", c: "" },
+			{ t: "  void ", c: "c-kw" }, { t: "init", c: "c-fn" }, { t: "() {\n", c: "" },
+			{ t: "    skills.add(", c: "" }, { t: "\"Java\"", c: "c-str" }, { t: ");\n", c: "" },
+			{ t: "    skills.add(", c: "" }, { t: "\".NET\"", c: "c-str" }, { t: ");\n", c: "" },
+			{ t: "    return ", c: "c-kw" }, { t: "\"Ready\";\n", c: "c-str" },
+			{ t: "  }\n}", c: "" }
+		];
+
+		let idx = 0, charIdx = 0;
+		let currentSpan = null; // Track current span being typed in
+
+		function type() {
+			if (idx < codeText.length) {
+				// Determine if we need to start a new token span
+				if (charIdx === 0) {
+					currentSpan = document.createElement('span');
+					currentSpan.className = codeText[idx].c;
+					// Always insert before the cursor
+					codeDiv.insertBefore(currentSpan, document.querySelector('.cursor'));
+				}
+
+				// Add character to the current span
+				currentSpan.textContent += codeText[idx].t[charIdx++];
+
+				// Move to next token if finished
+				if (charIdx >= codeText[idx].t.length) { idx++; charIdx = 0; }
+
+				// Continue typing
+				setTimeout(type, Math.random() * 30 + 20);
+			}
+		}
+
+		// Start typing after delay
+		setTimeout(type, 1000);
+
+		// 5. Theme Toggle
+		const toggleBtn = document.getElementById('theme-toggle');
+		const html = document.documentElement;
+
+		// Load saved theme or default to light
+		const savedTheme = localStorage.getItem('theme') || 'light';
+		setTheme(savedTheme);
+
+		toggleBtn.addEventListener('click', () => {
+			let current = html.getAttribute('data-theme');
+			let next = current === 'light' ? 'dark' : 'light';
+			setTheme(next);
+		});
+
+		function setTheme(theme) {
+			html.setAttribute('data-theme', theme);
+			localStorage.setItem('theme', theme);
+			document.getElementById('sun-icon').style.display = theme === 'light' ? 'block' : 'none';
+			document.getElementById('moon-icon').style.display = theme === 'dark' ? 'block' : 'none';
+		}
+	</script>
+</body>
+
+</html>
